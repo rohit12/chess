@@ -1,10 +1,12 @@
-#include "Board.h"
+#include "Headers/Board.h"
+#include "Headers/Rook.h"
 #include <iostream>
 #include <bitset>
 using namespace std;
 
 Board::Board()
 {
+	rook=Rook();
 	turn=0;
 
     whitePieces=0x000000000000FFFF;
@@ -33,11 +35,11 @@ Board::Board()
     whiteEnemyAndEmptySquares=blackPieces | emptySquares;
     blackEnemyAndEmptySquares=whitePieces | emptySquares;
     clearPieceRepresentation();
-    setRookBoards();
+    //setRookBoards();
         //fillPieceArray();
 }
 
-void Board::generateLegalMovesForRook(int bitPositionOfRook,char color)
+/*void Board::generateLegalMovesForRook(int bitPositionOfRook,char color)
 {
     long rightMoves;
     long leftMoves;
@@ -56,9 +58,9 @@ void Board::generateLegalMovesForRook(int bitPositionOfRook,char color)
         rightMoves&=blackEnemyAndEmptySquares;
     displayBoard(rightMoves);
 
-}
+}*/
 
-void Board::setRookBoards()
+/*void Board::setRookBoards()
 {
     int j;
     for (int i = 0; i < 64; i++)
@@ -77,7 +79,7 @@ void Board::setRookBoards()
             rookDownBoard[i]|=(1ULL<<j);
 
     }
-}
+}*/
 
 void Board::clearPieceRepresentation() //clearing the 8*8 char array
 {
@@ -221,18 +223,21 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
     }
     else if(pieceToMove=='r' || pieceToMove=='R')
     {
+    	long abc;
         if (turn%2==1)
         {
-            generateLegalMovesForRook(destination,'w');
+            abc=rook.generateLegalMovesForRook(destination,'w',whiteEnemyAndEmptySquares,fullBoard);
             whiteRook&=~(1ULL<<source);
-            whiteRook|=(1ULL<<destination);                
+            whiteRook|=(1ULL<<destination);
+
         }
         else
         {
-            generateLegalMovesForRook(destination,'b');
+            abc=rook.generateLegalMovesForRook(destination,'b',blackEnemyAndEmptySquares,fullBoard);
             blackRook&=~(1ULL<<source);
             blackRook|=(1ULL<<destination);
         }
+        displayBoard(abc);
         
     }
     else if(pieceToMove=='B' || pieceToMove=='b')
