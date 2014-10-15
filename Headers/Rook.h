@@ -1,5 +1,4 @@
-#ifndef ROOK_H
-#define ROOK_H
+#pragma once
 class Rook
 {
 public:
@@ -12,4 +11,3 @@ public:
     long rookUpBoard[64]={0}; // set all squares to the up of each square
     long rookDownBoard[64]={0}; // set all squares to the down of each square
 };
-#endif

@@ -1,3 +1,4 @@
+#pragma once
 #include "Rook.h"
 class Board
 {
@@ -24,6 +25,7 @@ public:
     long whiteEnemyAndEmptySquares;
     long blackEnemyAndEmptySquares;
 
+    int validMove;
     Rook rook;
 
     //long rookRightBoard[64]={0}; // set all squares to the right of each square
@@ -45,6 +47,4 @@ public:
 	void makeMove();
     void movePiece(char sourceSquare[],char destinationSquare[],char pieceToMove, int turn);
     int getSquare(char sourceSquare[]);
-    //void setRookBoards();
-    //void generateLegalMovesForRook(int bitPositionOfRook,char color);
 };
