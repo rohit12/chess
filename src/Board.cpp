@@ -1,5 +1,6 @@
 #include "../Headers/Board.h"
 #include "../Headers/Rook.h"
+#include "../Headers/Bishop.h"
 #include <iostream>
 #include <bitset>
 using namespace std;
@@ -7,7 +8,9 @@ using namespace std;
 Board::Board()
 {
 	rook=Rook();
+	bishop=Bishop();
 	turn=0;
+	hasKingMoved=0;
 
 	whitePieces=0x000000000000FFFF;
 	blackPieces=0xFFFF000000000000;
@@ -51,8 +54,8 @@ void Board::fillPieceArray() //fills the char array with the appropriate pieces
 {
 	long temp;
 	clearPieceRepresentation();
-	bitset<64> x(fullBoard);
-	cout<<x<<endl;
+	//bitset<64> x(fullBoard);
+	//cout<<x<<endl;
 	temp=(fullBoard&whitePawn)|(fullBoard&blackPawn);
 	for (int i = 0; i < 64; i++)
 		if(temp & (1ULL<<i))
@@ -195,6 +198,7 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 			else
 			{
 				//cout<<"The move is not legal"<<endl;
+				fillPieceArray();
 				validMove=0;
 				return;
 			}
@@ -202,7 +206,7 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 		}
 		else
 		{
-			legalMovesRook=rook.generateLegalMovesForRook(destination,'b',blackEnemyAndEmptySquares,fullBoard);
+			legalMovesRook=rook.generateLegalMovesForRook(source,'b',blackEnemyAndEmptySquares,fullBoard);
 			if ((1ULL<<destination)&legalMovesRook)
 			{
 				blackRook&=~(1ULL<<source);
@@ -210,6 +214,8 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 			}
 			else
 			{
+				fillPieceArray();
+				//cout<<"The move is not legal"<<endl;
 				validMove=0;
 				return;
 			}
@@ -219,13 +225,16 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 	}
 	else if(pieceToMove=='B' || pieceToMove=='b')
 	{
+		long legalMovesBishop;
 		if(turn%2==1)
 		{
+			legalMovesBishop=bishop.generateLegalMovesForBishop(source,'w',whiteEnemyAndEmptySquares,fullBoard);
 			whiteBishop&=~(1ULL<<source);
 			whiteBishop|=(1ULL<<destination);
 		}
 		else
 		{
+			legalMovesBishop=bishop.generateLegalMovesForBishop(source,'b',blackEnemyAndEmptySquares,fullBoard);
 			blackBishop&=~(1ULL<<source);
 			blackBishop|=(1ULL<<destination);
 		}

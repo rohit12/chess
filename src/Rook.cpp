@@ -35,7 +35,6 @@ long Rook::generateLegalMovesForRook(int bitPositionOfRook,char color,long enemy
     long upMoves;
     long downMoves;
     long rookMoves;
-    long rookCaptures;
 
     rightMoves=rookRightBoard[bitPositionOfRook] & fullBoard;
     rightMoves=(rightMoves<<1) | (rightMoves<<2) | (rightMoves<<3) | (rightMoves<<4) | (rightMoves<<5) | (rightMoves<<6);
