@@ -1,6 +1,7 @@
 #include "../Headers/Board.h"
 #include "../Headers/Rook.h"
 #include "../Headers/Bishop.h"
+#include "../Headers/King.h"
 #include <iostream>
 #include <bitset>
 using namespace std;
@@ -10,7 +11,6 @@ Board::Board()
 	rook=Rook();
 	bishop=Bishop();
 	turn=0;
-	hasKingMoved=0;
 
 	whitePieces=0x000000000000FFFF;
 	blackPieces=0xFFFF000000000000;
@@ -236,6 +236,7 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 			{
 				fillPieceArray();
 				validMove=0;
+				return;
 			}
 		}
 		else
@@ -250,6 +251,7 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 			{
 				fillPieceArray();
 				validMove=0;
+				return;
 			}
 		}
 	}
@@ -278,8 +280,9 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 			}
 			else
 			{
-				//fillPieceArray();
+				fillPieceArray();
 				validMove=0;
+				return;
 			}
 		}
 		else
@@ -294,6 +297,7 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 			{
 				fillPieceArray();
 				validMove=0;
+				return;
 			}
 		}
 	}
