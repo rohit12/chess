@@ -54,8 +54,6 @@ void Board::fillPieceArray() //fills the char array with the appropriate pieces
 {
 	long temp;
 	clearPieceRepresentation();
-	//bitset<64> x(fullBoard);
-	//cout<<x<<endl;
 	temp=(fullBoard&whitePawn)|(fullBoard&blackPawn);
 	for (int i = 0; i < 64; i++)
 		if(temp & (1ULL<<i))
@@ -229,14 +227,30 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 		if(turn%2==1)
 		{
 			legalMovesBishop=bishop.generateLegalMovesForBishop(source,'w',whiteEnemyAndEmptySquares,fullBoard);
-			whiteBishop&=~(1ULL<<source);
-			whiteBishop|=(1ULL<<destination);
+			if((1ULL<<destination)&legalMovesBishop)
+			{
+				whiteBishop&=~(1ULL<<source);
+				whiteBishop|=(1ULL<<destination);
+			}
+			else
+			{
+				fillPieceArray();
+				validMove=0;
+			}
 		}
 		else
 		{
 			legalMovesBishop=bishop.generateLegalMovesForBishop(source,'b',blackEnemyAndEmptySquares,fullBoard);
-			blackBishop&=~(1ULL<<source);
-			blackBishop|=(1ULL<<destination);
+			if ((1ULL<<destination)&legalMovesBishop)
+			{
+				blackBishop&=~(1ULL<<source);
+				blackBishop|=(1ULL<<destination);
+			}
+			else
+			{
+				fillPieceArray();
+				validMove=0;
+			}
 		}
 	}
 	else if(pieceToMove=='N' || pieceToMove=='n')
@@ -256,13 +270,31 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 	{
 		if (turn%2==1)
 		{
-			whiteQueen&=~(1ULL<<source);
-			whiteQueen|=(1ULL<<destination);
+			long legalMovesQueen=rook.generateLegalMovesForRook(source,'w',whiteEnemyAndEmptySquares,fullBoard) | bishop.generateLegalMovesForBishop(source,'w',whiteEnemyAndEmptySquares,fullBoard);
+			if ((1ULL<<destination)&legalMovesQueen)
+			{	
+				whiteQueen&=~(1ULL<<source);
+				whiteQueen|=(1ULL<<destination);
+			}
+			else
+			{
+				//fillPieceArray();
+				validMove=0;
+			}
 		}
 		else
 		{
-			blackQueen&=~(1ULL<<source);
-			blackQueen|=(1ULL<<destination);
+			long legalMovesQueen=rook.generateLegalMovesForRook(source,'b',blackEnemyAndEmptySquares,fullBoard) | bishop.generateLegalMovesForBishop(source,'b',blackEnemyAndEmptySquares,fullBoard);
+			if ((1ULL<<destination)&legalMovesQueen)
+			{
+				blackQueen&=~(1ULL<<source);
+				blackQueen|=(1ULL<<destination);
+			}
+			else
+			{
+				fillPieceArray();
+				validMove=0;
+			}
 		}
 	}
 	else if(pieceToMove=='K' || pieceToMove=='k')

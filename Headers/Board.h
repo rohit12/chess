@@ -28,7 +28,6 @@ public:
     long blackEnemyAndEmptySquares;
 
     int validMove;
-    int hasKingMoved;
     
     Rook rook;
 	Bishop bishop;
