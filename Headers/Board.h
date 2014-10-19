@@ -52,7 +52,13 @@ public:
 	void recomputeBitboards();
 	void makeMove();
 	void movePiece(char sourceSquare[],char destinationSquare[],char pieceToMove, int turn);
+	char getPieceOnSquare(int square);
+	void deletePieceFromSquare(char piece,char color, int destination);
 	void movePawn(int source, int destination, int turn);
 	void moveRook(int source, int destination, int turn);
+	void moveBishop(int source, int destination, int turn);
+	void moveKnight(int source, int destination, int turn);
+	void moveQueen(int source, int destination, int turn);
+	void moveKing(int source, int destination, int turn);
 	int getSquare(char sourceSquare[]);
 };

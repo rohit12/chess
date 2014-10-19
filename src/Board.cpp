@@ -144,7 +144,7 @@ void Board::makeMove() //makes a move
 	{
 		if(!(whitePieces&(1ULL<<getSquare(sourceSquare))))
 		{
-			cout<<"It is White's turn. Do not move black pieces."<<endl;
+			cout<<"No white piece exists on that square"<<endl;
 			turn--;
 			return;
 		}
@@ -153,7 +153,7 @@ void Board::makeMove() //makes a move
 	{
 		if(!(blackPieces&(1ULL<<getSquare(sourceSquare))))
 		{
-			cout<<"It is Black's turn. Do not move white pieces."<<endl;
+			cout<<"No black piece exists on that square"<<endl;
 			turn--;
 			return;
 		}
@@ -161,9 +161,76 @@ void Board::makeMove() //makes a move
 	cout<<"Enter destinationSquare: "<<endl;
 	cin>>destinationSquare;
 
-	cout<<"Enter piece to move: P R B N Q K"<<endl;
-	cin>>pieceToMove;
+	pieceToMove=getPieceOnSquare(getSquare(sourceSquare));
 	movePiece(sourceSquare,destinationSquare,pieceToMove,turn);
+}
+
+char Board::getPieceOnSquare(int square)
+{
+	if (((1ULL<<square)&whitePawn) || ((1ULL<<square)&blackPawn))
+		return 'P';
+
+	if (((1ULL<<square)&whiteRook) || ((1ULL<<square)&blackRook))
+		return 'R';
+
+	if (((1ULL<<square)&whiteBishop) || ((1ULL<<square)&blackBishop))
+		return 'B';
+
+	if (((1ULL<<square)&whiteKnight) || ((1ULL<<square)&blackKnight))
+		return 'N';
+
+	if (((1ULL<<square)&whiteQueen) || ((1ULL<<square)&blackQueen))
+		return 'Q';
+
+	if (((1ULL<<square)&whiteKing) || ((1ULL<<square)&blackKing))
+		return 'K';
+	return 'X';
+}
+
+void Board::deletePieceFromSquare(char piece, char color, int destination)
+{
+	switch(color)
+	{
+		case 'w':
+			if (piece=='P')
+				whitePawn&=~(1ULL<<destination);
+
+			else if (piece=='N')
+				whiteKnight&=~(1ULL<<destination);
+
+			else if(piece=='K')
+				whiteKing&=~(1ULL<<destination);
+
+			else if(piece=='Q')
+				whiteQueen&=~(1ULL<<destination);
+
+			else if(piece=='B')
+				whiteQueen&=~(1ULL<<destination);
+
+			else if(piece=='R')
+				whiteRook&=~(1ULL<<destination);
+		break;
+
+		case 'b':
+			if(piece=='P')
+				blackPawn&=~(1ULL<<destination);
+
+			else if(piece=='N')
+				blackKnight&=~(1ULL<<destination);
+
+			else if(piece=='K')
+				blackKing&=~(1ULL<<destination);
+
+			else if(piece=='Q')
+				blackQueen&=~(1ULL<<destination);
+
+			else if(piece=='B')
+				blackQueen&=~(1ULL<<destination);
+
+			else if(piece=='R')
+				blackRook&=~(1ULL<<destination);
+		break;
+	}
 }
 
 void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToMove, int turn) //actually moves a piece
@@ -171,252 +238,252 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 	int source,destination;
 	source=getSquare(sourceSquare);
 	destination=getSquare(destinationSquare);
+	
 	if(pieceToMove=='p' || pieceToMove=='P')
-	{
 		movePawn(source,destination,turn);
-		/*long legalMovesPawn;
-		if(turn%2==1)
-		{
-			legalMovesPawn=pawn.generateLegalMovesForPawn(source,'w',emptySquares,whitePieces,blackPieces,fullBoard);
-			if (legalMovesPawn & (1ULL<<destination))
-			{
-				whitePawn&=~(1ULL<<source);
-				whitePawn|=(1ULL<<destination);
-			}
-			else
-			{
-				fillPieceArray();
-				validMove=0;
-				return;
-			}
-		}
-		else if(turn%2==0)
-		{
-			legalMovesPawn=pawn.generateLegalMovesForPawn(source,'b',emptySquares,whitePieces,blackPieces,fullBoard);
-			if (legalMovesPawn & (1ULL<<destination))
-			{
-				blackPawn&=~(1ULL<<source);
-				blackPawn|=(1ULL<<destination);
-			}
-			else
-			{
-				fillPieceArray();
-				validMove=0;
-				return;
-			}
-		}*/
-		
-	}
-	else if(pieceToMove=='r' || pieceToMove=='R')
-	{
-		long legalMovesRook;
-		if (turn%2==1)
-		{
-			legalMovesRook=rook.generateLegalMovesForRook(source,'w',whiteEnemyAndEmptySquares,fullBoard);
-			if((1ULL<<destination)&legalMovesRook)
-			{
-				whiteRook&=~(1ULL<<source);
-				whiteRook|=(1ULL<<destination);
-			}
-			else
-			{
-				//cout<<"The move is not legal"<<endl;
-				fillPieceArray();
-				validMove=0;
-				return;
-			}
 
-		}
-		else
-		{
-			legalMovesRook=rook.generateLegalMovesForRook(source,'b',blackEnemyAndEmptySquares,fullBoard);
-			if ((1ULL<<destination)&legalMovesRook)
-			{
-				blackRook&=~(1ULL<<source);
-				blackRook|=(1ULL<<destination);	
-			}
-			else
-			{
-				fillPieceArray();
-				//cout<<"The move is not legal"<<endl;
-				validMove=0;
-				return;
-			}
-		}
-		displayBoard(legalMovesRook);
-		
-	}
+	else if(pieceToMove=='r' || pieceToMove=='R')
+		moveRook(source,destination,turn);
+
 	else if(pieceToMove=='B' || pieceToMove=='b')
-	{
-		long legalMovesBishop;
-		if(turn%2==1)
-		{
-			legalMovesBishop=bishop.generateLegalMovesForBishop(source,'w',whiteEnemyAndEmptySquares,fullBoard);
-			if((1ULL<<destination)&legalMovesBishop)
-			{
-				whiteBishop&=~(1ULL<<source);
-				whiteBishop|=(1ULL<<destination);
-			}
-			else
-			{
-				fillPieceArray();
-				validMove=0;
-				return;
-			}
-		}
-		else
-		{
-			legalMovesBishop=bishop.generateLegalMovesForBishop(source,'b',blackEnemyAndEmptySquares,fullBoard);
-			if ((1ULL<<destination)&legalMovesBishop)
-			{
-				blackBishop&=~(1ULL<<source);
-				blackBishop|=(1ULL<<destination);
-			}
-			else
-			{
-				fillPieceArray();
-				validMove=0;
-				return;
-			}
-		}
-	}
+		moveBishop(source,destination,turn);
+
 	else if(pieceToMove=='N' || pieceToMove=='n')
-	{
-		long legalMovesKnight;
-		if (turn%2==1)
-		{
-			legalMovesKnight=knight.generateLegalMovesForKnight(source,'w',whiteEnemyAndEmptySquares,fullBoard);
-			if ((1ULL<<destination) & legalMovesKnight)
-			{
-				whiteKnight&=~(1ULL<<source);
-				whiteKnight|=(1ULL<<destination);
-			}
-			else
-			{
-				fillPieceArray();
-				validMove=0;
-				return;
-			}
-		}
-		else
-		{
-			legalMovesKnight=knight.generateLegalMovesForKnight(source,'b',blackEnemyAndEmptySquares,fullBoard);
-			if ((1ULL<<destination) & legalMovesKnight)
-			{
-				blackKnight&=~(1ULL<<source);
-				blackKnight|=(1ULL<<destination);
-			}
-			else
-			{
-				fillPieceArray();
-				validMove=0;
-				return;
-			}
-		}
-	}
+		moveKnight(source,destination,turn);
+
 	else if(pieceToMove=='Q' || pieceToMove=='q')
-	{
-		if (turn%2==1)
-		{
-			long legalMovesQueen=rook.generateLegalMovesForRook(source,'w',whiteEnemyAndEmptySquares,fullBoard) | bishop.generateLegalMovesForBishop(source,'w',whiteEnemyAndEmptySquares,fullBoard);
-			if ((1ULL<<destination)&legalMovesQueen)
-			{	
-				whiteQueen&=~(1ULL<<source);
-				whiteQueen|=(1ULL<<destination);
-			}
-			else
-			{
-				fillPieceArray();
-				validMove=0;
-				return;
-			}
-		}
-		else
-		{
-			long legalMovesQueen=rook.generateLegalMovesForRook(source,'b',blackEnemyAndEmptySquares,fullBoard) | bishop.generateLegalMovesForBishop(source,'b',blackEnemyAndEmptySquares,fullBoard);
-			if ((1ULL<<destination)&legalMovesQueen)
-			{
-				blackQueen&=~(1ULL<<source);
-				blackQueen|=(1ULL<<destination);
-			}
-			else
-			{
-				fillPieceArray();
-				validMove=0;
-				return;
-			}
-		}
-	}
+		moveQueen(source,destination,turn);
+	
 	else if(pieceToMove=='K' || pieceToMove=='k')
-	{
-		long legalMovesKing;
-		if (turn%2==1)
-		{
-			legalMovesKing=king.generateLegalMovesForKing(source,'w',whiteEnemyAndEmptySquares,fullBoard);
-			if ((1ULL<<destination)&legalMovesKing)
-			{
-				whiteKing&=~(1ULL<<source);
-				whiteKing|=(1ULL<<destination);
-			}
-			else
-			{
-				validMove=0;
-				fillPieceArray();
-				return;
-			}
-		}
-		else
-		{
-			legalMovesKing=king.generateLegalMovesForKing(source,'b',blackEnemyAndEmptySquares,fullBoard);
-			if ((1ULL<<destination)&legalMovesKing)
-			{
-				blackKing&=~(1ULL<<source);
-				blackKing|=(1ULL<<destination);
-			}
-			else
-			{
-				validMove=0;
-				fillPieceArray();
-				return;
-			}
-		}
-	}
+		moveKing(source,destination,turn);
+		
 	recomputeBitboards();
 	fillPieceArray();
+}
+
+void Board::moveKing(int source, int destination, int turn)
+{
+	long legalMovesKing;
+	char piece='X';
+	if (turn%2==1)
+	{
+		legalMovesKing=king.generateLegalMovesForKing(source,'w',whiteEnemyAndEmptySquares,fullBoard);
+		if ((1ULL<<destination)&legalMovesKing)
+		{
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'b',destination);
+
+			whiteKing&=~(1ULL<<source);
+			whiteKing|=(1ULL<<destination);
+		}
+		else
+			validMove=0;
+	}
+	else
+	{
+		legalMovesKing=king.generateLegalMovesForKing(source,'b',blackEnemyAndEmptySquares,fullBoard);
+		if ((1ULL<<destination)&legalMovesKing)
+		{
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'w',destination);
+			blackKing&=~(1ULL<<source);
+			blackKing|=(1ULL<<destination);
+		}
+		else
+			validMove=0;
+	}
 }
 
 void Board::movePawn(int source,int destination,int turn)
 {
 	long legalMovesPawn;
+	char piece='X';
 	if(turn%2==1)
 	{
 		legalMovesPawn=pawn.generateLegalMovesForPawn(source,'w',emptySquares,whitePieces,blackPieces,fullBoard);
 		if (legalMovesPawn & (1ULL<<destination))
 		{
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'b',destination);
 			whitePawn&=~(1ULL<<source);
 			whitePawn|=(1ULL<<destination);
 		}
 		else
-		{
-			fillPieceArray();
 			validMove=0;
-			return;
-		}
 	}
 	else if(turn%2==0)
 	{
 		legalMovesPawn=pawn.generateLegalMovesForPawn(source,'b',emptySquares,whitePieces,blackPieces,fullBoard);
 		if (legalMovesPawn & (1ULL<<destination))
 		{
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'w',destination);
+
 			blackPawn&=~(1ULL<<source);
 			blackPawn|=(1ULL<<destination);
 		}
 		else
-		{
-			fillPieceArray();
 			validMove=0;
-			return;
+	}
+}
+
+void Board::moveBishop(int source, int destination, int turn)
+{
+	long legalMovesBishop;
+	char piece='X';
+	if(turn%2==1)
+	{
+		legalMovesBishop=bishop.generateLegalMovesForBishop(source,'w',whiteEnemyAndEmptySquares,fullBoard);
+		if((1ULL<<destination)&legalMovesBishop)
+		{
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'b',destination);
+
+			whiteBishop&=~(1ULL<<source);
+			whiteBishop|=(1ULL<<destination);
 		}
+		else
+			validMove=0;
+	}
+	else
+	{
+		legalMovesBishop=bishop.generateLegalMovesForBishop(source,'b',blackEnemyAndEmptySquares,fullBoard);
+		if ((1ULL<<destination)&legalMovesBishop)
+		{
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'w',destination);
+
+			blackBishop&=~(1ULL<<source);
+			blackBishop|=(1ULL<<destination);
+		}
+		else
+			validMove=0;
+	}
+}
+
+void Board::moveKnight(int source, int destination, int turn)
+{
+	long legalMovesKnight;
+	char piece='X';
+	if (turn%2==1)
+	{
+		legalMovesKnight=knight.generateLegalMovesForKnight(source,'w',whiteEnemyAndEmptySquares,fullBoard);
+		if ((1ULL<<destination) & legalMovesKnight)
+		{
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'b',destination);
+
+			whiteKnight&=~(1ULL<<source);
+			whiteKnight|=(1ULL<<destination);
+		}
+		else
+			validMove=0;
+	}
+	else
+	{
+		legalMovesKnight=knight.generateLegalMovesForKnight(source,'b',blackEnemyAndEmptySquares,fullBoard);
+		if ((1ULL<<destination) & legalMovesKnight)
+		{
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'w',destination);
+
+			blackKnight&=~(1ULL<<source);
+			blackKnight|=(1ULL<<destination);
+		}
+		else
+			validMove=0;
+	}
+}
+
+void Board::moveRook(int source, int destination, int turn)
+{
+	long legalMovesRook;
+	char piece='X';
+	if (turn%2==1)
+	{
+		legalMovesRook=rook.generateLegalMovesForRook(source,'w',whiteEnemyAndEmptySquares,fullBoard);
+		if((1ULL<<destination)&legalMovesRook)
+		{
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'b',destination);
+
+			whiteRook&=~(1ULL<<source);
+			whiteRook|=(1ULL<<destination);
+		}
+		else
+			validMove=0;
+
+	}
+	else
+	{
+		legalMovesRook=rook.generateLegalMovesForRook(source,'b',blackEnemyAndEmptySquares,fullBoard);
+		if ((1ULL<<destination)&legalMovesRook)
+		{
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'b',destination);
+
+			blackRook&=~(1ULL<<source);
+			blackRook|=(1ULL<<destination);	
+		}
+		else
+			validMove=0;
+	}
+}
+
+void Board::moveQueen(int source,int destination,int turn)
+{
+	char piece='X';
+	if (turn%2==1)
+	{
+		long legalMovesQueen=rook.generateLegalMovesForRook(source,'w',whiteEnemyAndEmptySquares,fullBoard) | bishop.generateLegalMovesForBishop(source,'w',whiteEnemyAndEmptySquares,fullBoard);
+		if ((1ULL<<destination)&legalMovesQueen)
+		{	
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'b',destination);
+
+			whiteQueen&=~(1ULL<<source);
+			whiteQueen|=(1ULL<<destination);
+		}
+		else
+			validMove=0;
+	}
+	else
+	{
+		long legalMovesQueen=rook.generateLegalMovesForRook(source,'b',blackEnemyAndEmptySquares,fullBoard) | bishop.generateLegalMovesForBishop(source,'b',blackEnemyAndEmptySquares,fullBoard);
+		if ((1ULL<<destination)&legalMovesQueen)
+		{
+			piece=getPieceOnSquare(destination);
+
+			if(piece!='X')
+				deletePieceFromSquare(piece,'w',destination);
+			
+			blackQueen&=~(1ULL<<source);
+			blackQueen|=(1ULL<<destination);
+		}
+		else
+			validMove=0;
 	}
 }
 
