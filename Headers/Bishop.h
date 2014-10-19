@@ -7,8 +7,8 @@ public:
 	void setBishopBoards();
 	void display(long xyz);
 
-	long fortyFiveDegreeBoard[64]={0};
-	long twoTwentyFiveDegreeBoard[64]={0};
-	long oneThirtyFiveDegreeBoard[64]={0};
-	long threeHundredFifteenDegreeBoard[64]={0};
+	long fortyFiveDegreeBoard[64];
+	long twoTwentyFiveDegreeBoard[64];
+	long oneThirtyFiveDegreeBoard[64];
+	long threeHundredFifteenDegreeBoard[64];
 };

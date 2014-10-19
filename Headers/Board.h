@@ -1,6 +1,9 @@
 #pragma once
 #include "../Headers/Rook.h"
 #include "../Headers/Bishop.h"
+#include "../Headers/King.h"
+#include "../Headers/Knight.h"
+#include "../Headers/Pawn.h"
 
 class Board
 {
@@ -23,27 +26,33 @@ public:
 	long blackPieces;
 
 	long fullBoard;
-    long emptySquares;
-    long whiteEnemyAndEmptySquares;
-    long blackEnemyAndEmptySquares;
+	long emptySquares;
 
-    int validMove;
-    
-    Rook rook;
+	long whiteEnemyAndEmptySquares;
+	long blackEnemyAndEmptySquares;
+
+	int validMove;
+	
+	Rook rook;
 	Bishop bishop;
+	King king;
+	Knight knight;
+	Pawn pawn;
 	
 	char pieceRepresentation[8][8];
 	char sourceSquare[2];
 	char destinationSquare[2];
 	char pieceToMove;
-    int turn;
+	int turn;
 
 	Board();
-    void clearPieceRepresentation();
+	void clearPieceRepresentation();
 	void fillPieceArray();
 	void displayBoard(long xyz);
 	void recomputeBitboards();
 	void makeMove();
-    void movePiece(char sourceSquare[],char destinationSquare[],char pieceToMove, int turn);
-    int getSquare(char sourceSquare[]);
+	void movePiece(char sourceSquare[],char destinationSquare[],char pieceToMove, int turn);
+	void movePawn(int source, int destination, int turn);
+	void moveRook(int source, int destination, int turn);
+	int getSquare(char sourceSquare[]);
 };

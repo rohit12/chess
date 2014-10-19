@@ -4,6 +4,10 @@
 using namespace std;
 Bishop::Bishop()
 {
+	fortyFiveDegreeBoard[64]={0};
+	twoTwentyFiveDegreeBoard[64]={0};
+	oneThirtyFiveDegreeBoard[64]={0};
+	threeHundredFifteenDegreeBoard[64]={0};
 	setBishopBoards();
 }
 

@@ -2,6 +2,8 @@
 #include "../Headers/Rook.h"
 #include "../Headers/Bishop.h"
 #include "../Headers/King.h"
+#include "../Headers/Knight.h"
+#include "../Headers/Pawn.h"
 #include <iostream>
 #include <bitset>
 using namespace std;
@@ -10,6 +12,9 @@ Board::Board()
 {
 	rook=Rook();
 	bishop=Bishop();
+	king=King();
+	knight=Knight();
+	pawn=Pawn();
 	turn=0;
 
 	whitePieces=0x000000000000FFFF;
@@ -94,8 +99,6 @@ void Board::fillPieceArray() //fills the char array with the appropriate pieces
 
 void Board::displayBoard(long xyz) //displays binary representation of xyz variable in chessboard format
 {
-	/*bitset<64>x(fullBoard);
-	cout<<x<<fullBoard<<endl;*/
 	for(int i=0;i<64;i++)
 	{
 	   if(i%8==0)
@@ -170,16 +173,38 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 	destination=getSquare(destinationSquare);
 	if(pieceToMove=='p' || pieceToMove=='P')
 	{
+		movePawn(source,destination,turn);
+		/*long legalMovesPawn;
 		if(turn%2==1)
 		{
-			whitePawn&=~(1ULL<<source);
-			whitePawn|=(1ULL<<destination);
+			legalMovesPawn=pawn.generateLegalMovesForPawn(source,'w',emptySquares,whitePieces,blackPieces,fullBoard);
+			if (legalMovesPawn & (1ULL<<destination))
+			{
+				whitePawn&=~(1ULL<<source);
+				whitePawn|=(1ULL<<destination);
+			}
+			else
+			{
+				fillPieceArray();
+				validMove=0;
+				return;
+			}
 		}
 		else if(turn%2==0)
 		{
-			blackPawn&=~(1ULL<<source);
-			blackPawn|=(1ULL<<destination);
-		}
+			legalMovesPawn=pawn.generateLegalMovesForPawn(source,'b',emptySquares,whitePieces,blackPieces,fullBoard);
+			if (legalMovesPawn & (1ULL<<destination))
+			{
+				blackPawn&=~(1ULL<<source);
+				blackPawn|=(1ULL<<destination);
+			}
+			else
+			{
+				fillPieceArray();
+				validMove=0;
+				return;
+			}
+		}*/
 		
 	}
 	else if(pieceToMove=='r' || pieceToMove=='R')
@@ -257,15 +282,36 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 	}
 	else if(pieceToMove=='N' || pieceToMove=='n')
 	{
+		long legalMovesKnight;
 		if (turn%2==1)
 		{
-			whiteKnight&=~(1ULL<<source);
-			whiteKnight|=(1ULL<<destination);
+			legalMovesKnight=knight.generateLegalMovesForKnight(source,'w',whiteEnemyAndEmptySquares,fullBoard);
+			if ((1ULL<<destination) & legalMovesKnight)
+			{
+				whiteKnight&=~(1ULL<<source);
+				whiteKnight|=(1ULL<<destination);
+			}
+			else
+			{
+				fillPieceArray();
+				validMove=0;
+				return;
+			}
 		}
 		else
 		{
-			blackKnight&=~(1ULL<<source);
-			blackKnight|=(1ULL<<destination);
+			legalMovesKnight=knight.generateLegalMovesForKnight(source,'b',blackEnemyAndEmptySquares,fullBoard);
+			if ((1ULL<<destination) & legalMovesKnight)
+			{
+				blackKnight&=~(1ULL<<source);
+				blackKnight|=(1ULL<<destination);
+			}
+			else
+			{
+				fillPieceArray();
+				validMove=0;
+				return;
+			}
 		}
 	}
 	else if(pieceToMove=='Q' || pieceToMove=='q')
@@ -303,19 +349,75 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 	}
 	else if(pieceToMove=='K' || pieceToMove=='k')
 	{
+		long legalMovesKing;
 		if (turn%2==1)
 		{
-			whiteKing&=~(1ULL<<source);
-			whiteKing|=(1ULL<<destination);
+			legalMovesKing=king.generateLegalMovesForKing(source,'w',whiteEnemyAndEmptySquares,fullBoard);
+			if ((1ULL<<destination)&legalMovesKing)
+			{
+				whiteKing&=~(1ULL<<source);
+				whiteKing|=(1ULL<<destination);
+			}
+			else
+			{
+				validMove=0;
+				fillPieceArray();
+				return;
+			}
 		}
 		else
 		{
-			blackKing&=~(1ULL<<source);
-			blackKing|=(1ULL<<destination);
+			legalMovesKing=king.generateLegalMovesForKing(source,'b',blackEnemyAndEmptySquares,fullBoard);
+			if ((1ULL<<destination)&legalMovesKing)
+			{
+				blackKing&=~(1ULL<<source);
+				blackKing|=(1ULL<<destination);
+			}
+			else
+			{
+				validMove=0;
+				fillPieceArray();
+				return;
+			}
 		}
 	}
 	recomputeBitboards();
 	fillPieceArray();
+}
+
+void Board::movePawn(int source,int destination,int turn)
+{
+	long legalMovesPawn;
+	if(turn%2==1)
+	{
+		legalMovesPawn=pawn.generateLegalMovesForPawn(source,'w',emptySquares,whitePieces,blackPieces,fullBoard);
+		if (legalMovesPawn & (1ULL<<destination))
+		{
+			whitePawn&=~(1ULL<<source);
+			whitePawn|=(1ULL<<destination);
+		}
+		else
+		{
+			fillPieceArray();
+			validMove=0;
+			return;
+		}
+	}
+	else if(turn%2==0)
+	{
+		legalMovesPawn=pawn.generateLegalMovesForPawn(source,'b',emptySquares,whitePieces,blackPieces,fullBoard);
+		if (legalMovesPawn & (1ULL<<destination))
+		{
+			blackPawn&=~(1ULL<<source);
+			blackPawn|=(1ULL<<destination);
+		}
+		else
+		{
+			fillPieceArray();
+			validMove=0;
+			return;
+		}
+	}
 }
 
 int Board::getSquare(char sourceSquare[]) //converts a square to a bit number. Eg: D2=11
