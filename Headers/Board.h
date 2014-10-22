@@ -4,10 +4,10 @@
 #include "../Headers/King.h"
 #include "../Headers/Knight.h"
 #include "../Headers/Pawn.h"
-
+#include <vector>
 class Board
 {
-public:
+protected:
 	long whitePawn;
 	long whiteKnight;
 	long whiteBishop;
@@ -45,6 +45,9 @@ public:
 	char pieceToMove;
 	int turn;
 
+	long bitboards[16];
+
+public:
 	Board();
 	void clearPieceRepresentation();
 	void fillPieceArray();
@@ -61,4 +64,5 @@ public:
 	void moveQueen(int source, int destination, int turn);
 	void moveKing(int source, int destination, int turn);
 	int getSquare(char sourceSquare[]);
+	void storeBitboardsInArray();
 };

@@ -6,6 +6,7 @@
 #include "../Headers/Pawn.h"
 #include <iostream>
 #include <bitset>
+#include <vector>
 using namespace std;
 
 Board::Board()
@@ -42,8 +43,31 @@ Board::Board()
 	emptySquares=fullBoard ^ 0xFFFFFFFFFFFFFFFF;
 	whiteEnemyAndEmptySquares=blackPieces | emptySquares;
 	blackEnemyAndEmptySquares=whitePieces | emptySquares;
-	clearPieceRepresentation();
+
+	clearPieceRepresentation();	
+	storeBitboardsInArray();
 	validMove=1;
+}
+
+void Board::storeBitboardsInArray()
+{
+	bitboards[0]=whitePawn;
+	bitboards[1]=blackPawn;
+	bitboards[2]=whiteKnight;
+	bitboards[3]=blackKnight;
+	bitboards[4]=whiteBishop;
+	bitboards[5]=blackBishop;
+	bitboards[6]=whiteRook;
+	bitboards[7]=blackRook;
+	bitboards[8]=whiteQueen;
+	bitboards[9]=blackQueen;
+	bitboards[10]=whiteKing;
+	bitboards[11]=blackKing;
+
+	bitboards[12]=fullBoard;
+	bitboards[13]=emptySquares;
+	bitboards[14]=whiteEnemyAndEmptySquares;
+	bitboards[15]=blackEnemyAndEmptySquares;
 }
 
 
@@ -258,6 +282,7 @@ void Board::movePiece(char sourceSquare[],char destinationSquare[],char pieceToM
 		moveKing(source,destination,turn);
 		
 	recomputeBitboards();
+	storeBitboardsInArray();
 	fillPieceArray();
 }
 
@@ -440,7 +465,7 @@ void Board::moveRook(int source, int destination, int turn)
 			piece=getPieceOnSquare(destination);
 
 			if(piece!='X')
-				deletePieceFromSquare(piece,'b',destination);
+				deletePieceFromSquare(piece,'w',destination);
 
 			blackRook&=~(1ULL<<source);
 			blackRook|=(1ULL<<destination);	
@@ -478,7 +503,7 @@ void Board::moveQueen(int source,int destination,int turn)
 
 			if(piece!='X')
 				deletePieceFromSquare(piece,'w',destination);
-			
+
 			blackQueen&=~(1ULL<<source);
 			blackQueen|=(1ULL<<destination);
 		}
